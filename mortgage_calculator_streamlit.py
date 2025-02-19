@@ -23,7 +23,7 @@ def calculate_amortization_schedule(apr, monthly_repayment, deposit, total_asset
         data.append([month // 12, month % 12 + 1, balance, equity, interest_payment, principal_payment])
         month += 1
     
-    df = pd.DataFrame(data, columns=['Year', 'Month', 'Remaining Balance', 'Total Equity', 'Interest Paid', 'Principal Paid'])
+    df = pd.DataFrame(data, columns=['Year', 'Month', 'Total Debt', 'Total Equity', 'Interest Paid', 'Principal Paid'])
     return df
 
 def mortgage_summary(df, total_debt):
@@ -43,7 +43,7 @@ def get_equity_at_year_month(df, year, month):
     result = df[(df['Year'] == year) & (df['Month'] == month)]
     if result.empty:
         return "Invalid year or month provided."
-    return result[['Total Equity']]
+    return result[['Total Equity', 'Total Debt']]
 
 
 # Streamlit UI
