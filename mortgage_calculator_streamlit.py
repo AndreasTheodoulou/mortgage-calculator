@@ -79,7 +79,7 @@ def main():
         # Equity lookup
         st.subheader("Retrieve Equity at Specific Time")
         year_equity = st.number_input("Year", min_value=0, value=5)
-        month_equity = st.number_input("Month", min_value=1, max_value=12, value=6)
+        month_equity = st.number_input("Month", min_value=1, max_value=12, value=1)
 
         if st.button("Get Equity"):
             equity = get_equity_at_year_month(st.session_state.df, year_equity, month_equity)
