@@ -8,6 +8,7 @@ def calculate_amortization_schedule(apr, monthly_repayment, deposit, total_asset
     
     balance = total_debt
     month = 0
+    cumulative_interest = 0  # Initialize cumulative interest
     data = []
     
     while balance > 0:
@@ -20,10 +21,11 @@ def calculate_amortization_schedule(apr, monthly_repayment, deposit, total_asset
             balance = 0
         
         equity = total_asset_value - balance
-        data.append([month // 12, month % 12 + 1, balance, equity, interest_payment, principal_payment])
+        cumulative_interest += interest_payment  # Update cumulative interest
+        data.append([month // 12, month % 12 + 1, balance, equity, interest_payment, principal_payment, cumulative_interest])
         month += 1
     
-    df = pd.DataFrame(data, columns=['Year', 'Month', 'Total Debt', 'Total Equity', 'Interest Paid', 'Principal Paid'])
+    df = pd.DataFrame(data, columns=['Year', 'Month', 'Total Debt', 'Total Equity', 'Interest Paid', 'Principal Paid', 'Total Interest Paid'])
     return df
 
 def mortgage_summary(df, total_debt):
@@ -43,7 +45,7 @@ def get_equity_at_year_month(df, year, month):
     result = df[(df['Year'] == year) & (df['Month'] == month)]
     if result.empty:
         return "Invalid year or month provided."
-    return result[['Total Equity', 'Total Debt']]
+    return result[['Total Equity', 'Total Debt', 'Total Interest Paid']]
 
 
 # Streamlit UI
