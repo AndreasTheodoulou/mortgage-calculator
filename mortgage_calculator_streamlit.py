@@ -47,7 +47,6 @@ def get_equity_at_year_month(df, year, month):
         return "Invalid year or month provided."
     return result[['Total Equity', 'Total Debt', 'Total Interest Paid']]
 
-
 # Streamlit UI
 def main():
     st.title("Mortgage Calculator")
@@ -57,27 +56,31 @@ def main():
     monthly_repayment = st.number_input("Monthly Repayment", min_value=1, value=4400)
     deposit = st.number_input("Deposit", min_value=0, value=100000)
     total_asset_value = st.number_input("Total Asset Value", min_value=1, value=520000)
-    
-    # Check if session state already contains df
+
+    # Initialize session state
     if "df" not in st.session_state:
         st.session_state.df = None
-    
+    if "summary" not in st.session_state:
+        st.session_state.summary = None
+
+    # Mortgage calculation
     if st.button("Calculate Mortgage"):
         st.session_state.df = calculate_amortization_schedule(apr, monthly_repayment, deposit, total_asset_value)
-        summary = mortgage_summary(st.session_state.df, total_asset_value - deposit)
-        
+        st.session_state.summary = mortgage_summary(st.session_state.df, total_asset_value - deposit)
+
+    # Persist outputs across button presses
+    if st.session_state.df is not None:
         st.subheader("Mortgage Summary")
-        st.dataframe(summary)
+        st.dataframe(st.session_state.summary)
         
         st.subheader("Amortization Schedule")
         st.dataframe(st.session_state.df)
-    
-    # Equity lookup (Only run if df exists)
-    if st.session_state.df is not None:
+
+        # Equity lookup
         st.subheader("Retrieve Equity at Specific Time")
         year_equity = st.number_input("Year", min_value=0, value=5)
-        month_equity = st.number_input("Month", min_value=1, max_value=12, value=1)
-        
+        month_equity = st.number_input("Month", min_value=1, max_value=12, value=6)
+
         if st.button("Get Equity"):
             equity = get_equity_at_year_month(st.session_state.df, year_equity, month_equity)
             st.write(equity)
